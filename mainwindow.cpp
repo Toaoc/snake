@@ -56,7 +56,7 @@ void mainWidget::pressSetup()
 	setup = new setupWidget;
 	setup->show();
 	this->close();
-	connect(setup, &setupWidget::stopMusic, player, &QMediaPlayer::pause);
+	connect(setup, &setupWidget::stopMusic, this,&mainWidget::musicControl);
 	connect(setup, &setupWidget::sonclose, this, &mainWidget::show);
 }
 void mainWidget::pressInduce()
@@ -79,4 +79,11 @@ void mainWidget::pressExit()
 {
 	this->close();
 	emit closeAll();
+}
+void mainWidget::musicControl(bool isStop)
+{
+	if (isStop == 1)
+		player->pause();
+	else
+		player->play();
 }

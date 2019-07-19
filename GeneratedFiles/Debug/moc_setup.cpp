@@ -57,19 +57,19 @@ static const uint qt_meta_data_setupWidget[] = {
 
  // signals: name, argc, parameters, tag, flags
        1,    0,   34,    2, 0x06 /* Public */,
-       3,    0,   35,    2, 0x06 /* Public */,
+       3,    1,   35,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       4,    0,   36,    2, 0x0a /* Public */,
-       5,    0,   37,    2, 0x0a /* Public */,
+       4,    0,   38,    2, 0x0a /* Public */,
+       5,    1,   39,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool,    2,
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool,    2,
 
        0        // eod
 };
@@ -81,9 +81,9 @@ void setupWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->sonclose(); break;
-        case 1: _t->stopMusic(); break;
+        case 1: _t->stopMusic((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 2: _t->sendclose(); break;
-        case 3: _t->sendstop(); break;
+        case 3: _t->sendstop((*reinterpret_cast< bool(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -97,14 +97,13 @@ void setupWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
             }
         }
         {
-            typedef void (setupWidget::*_t)();
+            typedef void (setupWidget::*_t)(bool );
             if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&setupWidget::stopMusic)) {
                 *result = 1;
                 return;
             }
         }
     }
-    Q_UNUSED(_a);
 }
 
 const QMetaObject setupWidget::staticMetaObject = {
@@ -150,8 +149,9 @@ void setupWidget::sonclose()
 }
 
 // SIGNAL 1
-void setupWidget::stopMusic()
+void setupWidget::stopMusic(bool _t1)
 {
-    QMetaObject::activate(this, &staticMetaObject, 1, Q_NULLPTR);
+    void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
 QT_END_MOC_NAMESPACE

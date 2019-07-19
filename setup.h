@@ -16,7 +16,7 @@ class setupWidget :public QWidget
 	Q_OBJECT
 signals:
 	void sonclose();
-	void stopMusic();
+	void stopMusic(bool);
 protected:
 	QGridLayout *setupLayout, *setupOpLayout;
 	QWidget *setupOp;
@@ -30,6 +30,6 @@ public:
 	setupWidget(QWidget*parent=0);
 public slots:
 	void sendclose();
-	void sendstop();
+	void sendstop(bool);
 };
 #endif // !SETUP_H

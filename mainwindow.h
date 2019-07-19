@@ -25,6 +25,7 @@ public:
 	QMediaPlayer *player;
 	QMediaPlaylist *playlist;
 public slots:
+	void musicControl(bool);
 private slots:
 	void pressGame();
 	void pressSetup();

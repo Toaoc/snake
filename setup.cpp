@@ -69,7 +69,7 @@ void setupWidget::sendclose()
 	emit sonclose();
 	delete this;
 }
-void setupWidget::sendstop()
+void setupWidget::sendstop(bool isStop)
 {
-	emit stopMusic();
+	emit stopMusic(isStop);
 }
