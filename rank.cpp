@@ -14,7 +14,17 @@ rankWidget::rankWidget(QWidget *parent) :QMainWindow(parent)
 	textBox = new QTextEdit(this);
 	this->setCentralWidget(textBox);
 	QString str = QString::fromLocal8Bit("游戏者\t\t分数\t\t时间");
-	textBox->setPlainText(str);
+	textBox->setText(str);
+
+	file = new QFile("Resources/rank.txt",textBox);
+	if (!(file->open(QIODevice::ReadOnly | QIODevice::Text)))
+	{
+		QMessageBox::warning(this,tr("Read File"), tr("Cannot open file Resources/rank.txt"));
+		sendclose();
+	}
+	in = new QTextStream(file);
+	textBox->append(in->readAll());
+	file->close();
 	textBox->setReadOnly(1);
 
 	connect(back, &QPushButton::clicked, this, &rankWidget::sendclose);

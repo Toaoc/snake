@@ -6,6 +6,9 @@
 #include<QString>
 #include<QTextEdit>
 #include<QToolBar>
+#include<QFile>
+#include<QMessageBox>
+#include<QTextStream>
 class rankWidget :public QMainWindow
 {
 	Q_OBJECT
@@ -15,6 +18,9 @@ private:
 	QPushButton *back;
 	QTextEdit *textBox;
 	QToolBar *toolbar;
+	QFile *file;
+	QMessageBox *errorOpen;
+	QTextStream *in;
 public:
 	rankWidget(QWidget *parent = 0);
 public slots:

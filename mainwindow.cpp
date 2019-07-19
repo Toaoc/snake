@@ -45,9 +45,9 @@ mainWidget::mainWidget(QWidget *parent) :QWidget(parent)
 }
 void mainWidget::pressGame()
 {
-	GameWidget *Game;
-	Game = new GameWidget;
-	Game->show();
+	gameWidget *game;
+	game = new gameWidget;
+	game->show();
 	this->close();
 }
 void mainWidget::pressSetup()
