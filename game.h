@@ -28,12 +28,18 @@ protected:
 	QPushButton *controlExit;
 	QLineEdit *scoreView;
 	QLineEdit *diffView;
+	QWidget *fill1;
+	QWidget *fill2;
+	QWidget *fill3;
+	QWidget *fill4;
 public:
 	gameWidget(QWidget *parent = 0);
 public slots:
 	void sendclose();
+	void sendexit();
 signals:
 	void sonclose();
+	void sonexit();
 	
 };
 #endif // !GAME_H

@@ -1,2 +1,7 @@
-﻿  game.cpp
+﻿  Moc'ing game.h...
+  moc_game.cpp
+  moc_mainwindow.cpp
+  game.cpp
+  main.cpp
+  mainwindow.cpp
   snake.vcxproj -> C:\Users\m1821\source\repos\snake\x64\Debug\snake.exe

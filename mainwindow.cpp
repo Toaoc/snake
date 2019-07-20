@@ -49,6 +49,8 @@ void mainWidget::pressGame()
 	game = new gameWidget;
 	game->show();
 	this->close();
+	connect(game, &gameWidget::sonclose, this, &mainWidget::show);
+	connect(game, &gameWidget::sonexit, this, &mainWidget::pressExit);
 }
 void mainWidget::pressSetup()
 {
