@@ -1,11 +1,52 @@
 #include"game.h"
 #include<QString>
+SnakeHead::SnakeHead()
+{
+	setFlag(QGraphicsItem::ItemIsFocusable);
+	setFlag(QGraphicsItem::ItemIsMovable);
+}
+QRectF SnakeHead::boundingRect()const
+{
+	qreal penWidth = 1;
+	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 20 + penWidth, 20 + penWidth);
+}
+void SnakeHead::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+	painter->setBrush(Qt::red);
+	painter->drawRect(0, 0, 20, 20);
+}
+void SnakeHead::keyPressEvent(QKeyEvent *event)
+{
+	qDebug ()<< event->key()<<"Yes";
+	switch (event->key())
+	{
+	case 16777235:
+	case 87:this->moveBy(0, -20); break;//向上移动
+	case 16777237:
+	case 83:this->moveBy(0, 20); break;//向下移动
+	case 16777234:
+	case 65:this->moveBy(-20, 0); break;//向左移动
+	case 16777236:
+	case 68:this->moveBy(20, 0); break;//向右移动
+	default:
+		break;
+	}
+}
+void gameWidget::keyPressEvent(QKeyEvent *event)
+{
+	senddirection(event->key());
+	qDebug() << event->key() << "hello";
+}
 gameWidget::gameWidget(QWidget*parent) :QWidget(parent)
 {
 	this->resize(1100, 750);
 	mainLayout = new QGridLayout(this);
-	snakeView = new QGraphicsView(this);
+	snakeScene = new QGraphicsScene(this);
+	snakeView = new QGraphicsView(snakeScene,this);
 	controlView = new QWidget(this);
+	snakeScene->setSceneRect(snakeView->rect());
 	mainLayout->addWidget(snakeView, 0, 0, 1, 15);
 	mainLayout->addWidget(controlView, 0, 15, 1, 7);
 
@@ -68,9 +109,18 @@ gameWidget::gameWidget(QWidget*parent) :QWidget(parent)
 	controlLayout->addWidget(controlBack, 57, 12, 5, 10);
 	controlLayout->addWidget(controlExit, 65, 12, 5, 10);
 
+	snakeHead = new SnakeHead;
+	food = new SnakeHead;
+	snakeScene->addItem(food);
+	snakeScene->addItem(snakeHead);
+	food->setPos(100, 100);
+	snakeView->show();
+	snakeView->setEnabled(1);
+	snakeHead->setFocus();
+	snakeScene->setFocusItem(snakeHead);
+	
 	connect(controlBack, &QPushButton::clicked, this, &gameWidget::sendclose);
 	connect(controlExit, &QPushButton::clicked, this, &gameWidget::sendexit);
-	
 }
 void gameWidget::sendclose()
 {
@@ -81,4 +131,8 @@ void gameWidget::sendexit()
 {
 	emit sonexit();
 	delete this;
+}
+void  gameWidget::senddirection(int direction)
+{
+	emit keydiretion(direction);
 }
