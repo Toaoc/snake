@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_mainWidget_t {
-    QByteArrayData data[9];
-    char stringdata0[87];
+    QByteArrayData data[10];
+    char stringdata0[97];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,17 +32,18 @@ static const qt_meta_stringdata_mainWidget_t qt_meta_stringdata_mainWidget = {
 QT_MOC_LITERAL(0, 0, 10), // "mainWidget"
 QT_MOC_LITERAL(1, 11, 8), // "closeAll"
 QT_MOC_LITERAL(2, 20, 0), // ""
-QT_MOC_LITERAL(3, 21, 12), // "musicControl"
-QT_MOC_LITERAL(4, 34, 9), // "pressGame"
-QT_MOC_LITERAL(5, 44, 10), // "pressSetup"
-QT_MOC_LITERAL(6, 55, 11), // "pressInduce"
-QT_MOC_LITERAL(7, 67, 9), // "pressRank"
-QT_MOC_LITERAL(8, 77, 9) // "pressExit"
+QT_MOC_LITERAL(3, 21, 9), // "gamestart"
+QT_MOC_LITERAL(4, 31, 12), // "musicControl"
+QT_MOC_LITERAL(5, 44, 9), // "pressGame"
+QT_MOC_LITERAL(6, 54, 10), // "pressSetup"
+QT_MOC_LITERAL(7, 65, 11), // "pressInduce"
+QT_MOC_LITERAL(8, 77, 9), // "pressRank"
+QT_MOC_LITERAL(9, 87, 9) // "pressExit"
 
     },
-    "mainWidget\0closeAll\0\0musicControl\0"
-    "pressGame\0pressSetup\0pressInduce\0"
-    "pressRank\0pressExit"
+    "mainWidget\0closeAll\0\0gamestart\0"
+    "musicControl\0pressGame\0pressSetup\0"
+    "pressInduce\0pressRank\0pressExit"
 };
 #undef QT_MOC_LITERAL
 
@@ -52,25 +53,27 @@ static const uint qt_meta_data_mainWidget[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       1,       // signalCount
+       2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   49,    2, 0x06 /* Public */,
+       1,    0,   54,    2, 0x06 /* Public */,
+       3,    0,   55,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       3,    1,   50,    2, 0x0a /* Public */,
-       4,    0,   53,    2, 0x08 /* Private */,
-       5,    0,   54,    2, 0x08 /* Private */,
-       6,    0,   55,    2, 0x08 /* Private */,
-       7,    0,   56,    2, 0x08 /* Private */,
-       8,    0,   57,    2, 0x08 /* Private */,
+       4,    1,   56,    2, 0x0a /* Public */,
+       5,    0,   59,    2, 0x08 /* Private */,
+       6,    0,   60,    2, 0x08 /* Private */,
+       7,    0,   61,    2, 0x08 /* Private */,
+       8,    0,   62,    2, 0x08 /* Private */,
+       9,    0,   63,    2, 0x08 /* Private */,
 
  // signals: parameters
+    QMetaType::Void,
     QMetaType::Void,
 
  // slots: parameters
@@ -91,12 +94,13 @@ void mainWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->closeAll(); break;
-        case 1: _t->musicControl((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 2: _t->pressGame(); break;
-        case 3: _t->pressSetup(); break;
-        case 4: _t->pressInduce(); break;
-        case 5: _t->pressRank(); break;
-        case 6: _t->pressExit(); break;
+        case 1: _t->gamestart(); break;
+        case 2: _t->musicControl((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 3: _t->pressGame(); break;
+        case 4: _t->pressSetup(); break;
+        case 5: _t->pressInduce(); break;
+        case 6: _t->pressRank(); break;
+        case 7: _t->pressExit(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -106,6 +110,13 @@ void mainWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
             typedef void (mainWidget::*_t)();
             if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&mainWidget::closeAll)) {
                 *result = 0;
+                return;
+            }
+        }
+        {
+            typedef void (mainWidget::*_t)();
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&mainWidget::gamestart)) {
+                *result = 1;
                 return;
             }
         }
@@ -137,13 +148,13 @@ int mainWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 8;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
+        if (_id < 8)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 7;
+        _id -= 8;
     }
     return _id;
 }
@@ -152,6 +163,12 @@ int mainWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void mainWidget::closeAll()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, Q_NULLPTR);
+}
+
+// SIGNAL 1
+void mainWidget::gamestart()
+{
+    QMetaObject::activate(this, &staticMetaObject, 1, Q_NULLPTR);
 }
 struct qt_meta_stringdata_Button_t {
     QByteArrayData data[1];

@@ -15,6 +15,7 @@ class mainWidget :public QWidget
 protected:
 signals:
 	void closeAll();
+	void gamestart();
 public:
 	mainWidget(QWidget *parent=0);
 	QPushButton *mGame;

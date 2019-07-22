@@ -1,5 +1,9 @@
 #include"game.h"
 #include<QString>
+#include<Windows.h>
+int addWall = 0;
+int totalWall = 0;
+int deleteWall = 0;
 SnakeHead::SnakeHead()
 {
 	setFlag(QGraphicsItem::ItemIsFocusable);
@@ -14,26 +18,79 @@ void SnakeHead::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
-	painter->setBrush(Qt::red);
+	painter->setBrush(Qt::green);
 	painter->drawRect(0, 0, 20, 20);
 }
 void SnakeHead::keyPressEvent(QKeyEvent *event)
 {
-	qDebug ()<< event->key()<<"Yes";
 	switch (event->key())
 	{
 	case 16777235:
-	case 87:this->moveBy(0, -20); break;//向上移动
+	case 87:this->moveBy(0, -20); emit snakeTurn(); break;//向上移动
 	case 16777237:
-	case 83:this->moveBy(0, 20); break;//向下移动
+	case 83:this->moveBy(0, 20); emit snakeTurn(); break;//向下移动
 	case 16777234:
-	case 65:this->moveBy(-20, 0); break;//向左移动
+	case 65:this->moveBy(-20, 0); emit snakeTurn(); break;//向左移动
 	case 16777236:
-	case 68:this->moveBy(20, 0); break;//向右移动
+	case 68:this->moveBy(20, 0);  emit snakeTurn(); break;//向右移动
 	default:
 		break;
 	}
+	collisionHandle();
 }
+void SnakeHead::collisionHandle()
+{
+	QList<QGraphicsItem*> items = collidingItems();
+	foreach(QGraphicsItem *item, items)
+	{
+		if (item->type() == 65537)
+			emit eatFood();
+		else
+			emit snakeDied();
+	}
+}
+
+
+Food::Food(qreal m_x, qreal m_y)
+{
+	this->setPos(m_x, m_y);
+}
+QRectF Food::boundingRect()const
+{
+	qreal penWidth = 1;
+	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 20 + penWidth, 20 + penWidth);
+}
+void Food::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+	painter->setBrush(Qt::yellow);
+	painter->drawRect(0, 0, 20, 20);
+}
+
+
+QRectF Wall::boundingRect()const
+{
+	qreal penWidth = 1;
+	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 20 + penWidth, 20 + penWidth);
+}
+void Wall::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+	painter->setBrush(Qt::red);
+	painter->drawRect(0, 0, 20, 20);
+}
+Wall::Wall(qreal x, qreal y)
+{
+	this->setPos(x, y);
+}
+Wall::Wall(Wall&w)
+{
+	
+}
+
+
 void gameWidget::keyPressEvent(QKeyEvent *event)
 {
 	senddirection(event->key());
@@ -89,6 +146,9 @@ gameWidget::gameWidget(QWidget*parent) :QWidget(parent)
 	diffView = new QLineEdit(controlView);
 
 	controlView->setFixedWidth(300);
+	snakeView->setMinimumHeight(750);
+	snakeView->setMinimumWidth(this->width() - 300);
+	snakeScene->setSceneRect(0, 0, snakeView->width()-10, snakeView->height()-10);
 	mainLayout->addWidget(snakeView, 0, 0);
 	mainLayout->addWidget(controlView, 0, 75 );
 	controlLayout = new QGridLayout(controlView);
@@ -109,18 +169,24 @@ gameWidget::gameWidget(QWidget*parent) :QWidget(parent)
 	controlLayout->addWidget(controlBack, 57, 12, 5, 10);
 	controlLayout->addWidget(controlExit, 65, 12, 5, 10);
 
-	snakeHead = new SnakeHead;
-	food = new SnakeHead;
+	/*snakeHead = new SnakeHead;
+	food = new Food;
 	snakeScene->addItem(food);
 	snakeScene->addItem(snakeHead);
 	food->setPos(100, 100);
 	snakeView->show();
 	snakeView->setEnabled(1);
 	snakeHead->setFocus();
-	snakeScene->setFocusItem(snakeHead);
+	snakeScene->setFocusItem(snakeHead);*/
+	gamePlay = new GamePlay(snakeView, snakeScene,this);
+	qDebug() << snakeView->height() << " " << snakeView->width();
+	qDebug() << snakeScene->height() << " " << snakeScene->width();
+
+	
 	
 	connect(controlBack, &QPushButton::clicked, this, &gameWidget::sendclose);
 	connect(controlExit, &QPushButton::clicked, this, &gameWidget::sendexit);
+	connect(gamePlay, &GamePlay::gameOver, this, &gameWidget::gameOverBox);
 }
 void gameWidget::sendclose()
 {
@@ -135,4 +201,110 @@ void gameWidget::sendexit()
 void  gameWidget::senddirection(int direction)
 {
 	emit keydiretion(direction);
+}
+void gameWidget::gameOverBox()
+{
+	gameEndBox = new QMessageBox;
+	gameEndBox->setText(QString::fromLocal8Bit("你真棒！"));
+	gameEndBox->addButton(QString::fromLocal8Bit("确定"), QMessageBox::RejectRole);
+	gameEndBox->addButton(QString::fromLocal8Bit("取消"), QMessageBox::AcceptRole);
+	gameEndBox->show();
+}
+
+
+GamePlay::GamePlay(QGraphicsView *m_snakeView, QGraphicsScene *m_snakeScene,QWidget *parent):QWidget(parent)
+{
+	snakeView = m_snakeView;
+	snakeScene = m_snakeScene;
+	snakeHead = new SnakeHead;
+	food = new Food(100, 100);
+	snakeScene->addItem(food);
+	snakeScene->addItem(snakeHead);
+	snakeView->show();
+	snakeView->setEnabled(1);
+	snakeHead->setFocus();
+	snakeScene->setFocusItem(snakeHead);
+	setWall();
+	setWall();
+	connect(snakeHead, &SnakeHead::eatFood, this, &GamePlay::setFood);
+	connect(snakeHead, &SnakeHead::snakeDied, this, &GamePlay::sendOver);
+	connect(snakeHead, &SnakeHead::snakeTurn, this, &GamePlay::setWall);
+
+	/*addWallTime = new QTimer;
+	thread = new QThread;
+	addWallTime->moveToThread(thread);
+	connect(addWallTime, &QTimer::timeout, this, &GamePlay::setWall);
+	addWallTime->start(1000);*/
+}
+void GamePlay::setFood()
+{
+	qreal x, y;
+	if (snakeView->width() < 810)
+	{
+		x = qrand() % (snakeView->width() - 10);
+		y = qrand() % (snakeView->height() - 10);
+	}
+	else
+	{
+		snakeScene->setSceneRect(0, 0, snakeView->width() - 10, snakeView->height() - 10);
+		qDebug() << "screen-width: " << snakeView->width();
+		qDebug() << "scene-width: " << snakeScene->width();
+		x = qrand() % (snakeView->width() - 100);
+		y = qrand() % (snakeView->height() - 100);
+	}
+	delete food;
+	qDebug() << "x: " << x << "  y:" << y;
+	food = new Food(x, y);
+	snakeScene->addItem(food);
+	destroyWall();
+}
+void GamePlay::setWall()
+{
+	if (totalWall!=10)
+	{
+		qreal x, y;
+		if (snakeView->width() < 810)
+		{
+			x = qrand() % (snakeView->width() - 10);
+			y = qrand() % (snakeView->height() - 10);
+		}
+		else
+		{
+			snakeScene->setSceneRect(0, 0, snakeView->width() - 10, snakeView->height() - 10);
+			qDebug() << "screen-width: " << snakeView->width();
+			qDebug() << "scene-width: " << snakeScene->width();
+			x = qrand() % (snakeView->width() - 100);
+			y = qrand() % (snakeView->height() - 100);
+		}
+		if (addWall == 10)
+			addWall = 0;
+		wallList[addWall] = new Wall(x, y);
+		snakeScene->addItem(wallList[addWall]);
+		qDebug() << "addWall: " << addWall;
+		qDebug() << "totalWall: " << totalWall;
+		addWall++;
+		totalWall++;
+	}
+}
+void GamePlay::destroyWall()
+{
+	qDebug() << "deleteWall: " << deleteWall;
+	if (totalWall != 0)
+	{
+		if (deleteWall == 9)
+		{
+			delete wallList[deleteWall];
+			deleteWall = 0;
+		}
+		else
+		{
+			delete wallList[deleteWall];
+			deleteWall++;
+		}
+		totalWall--;
+	}
+}
+void GamePlay::sendOver()
+{
+	emit gameOver();
 }
