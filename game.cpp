@@ -12,31 +12,57 @@ SnakeHead::SnakeHead()
 QRectF SnakeHead::boundingRect()const
 {
 	qreal penWidth = 1;
-	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 20 + penWidth, 20 + penWidth);
+	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 5 + penWidth, 20 + penWidth);
 }
 void SnakeHead::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	painter->setBrush(Qt::green);
-	painter->drawRect(0, 0, 20, 20);
+	painter->drawRect(0, 0, 5, 20);
 }
 void SnakeHead::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key())
 	{
 	case 16777235:
-	case 87:this->moveBy(0, -20); emit snakeTurn(); break;//向上移动
+	case 87:this->moveBy(0, -20); emit snakeTurn(1); break;//向上移动
 	case 16777237:
-	case 83:this->moveBy(0, 20); emit snakeTurn(); break;//向下移动
+	case 83:this->moveBy(0, 20); emit snakeTurn(2); break;//向下移动
 	case 16777234:
-	case 65:this->moveBy(-20, 0); emit snakeTurn(); break;//向左移动
+	case 65:this->moveBy(-20, 0); emit snakeTurn(3); break;//向左移动
 	case 16777236:
-	case 68:this->moveBy(20, 0);  emit snakeTurn(); break;//向右移动
+	case 68:this->moveBy(20, 0);  emit snakeTurn(4); break;//向右移动
 	default:
 		break;
 	}
+}
+void SnakeHead::reMove()
+{
+	qreal x1 = 0, x2 = 790, y1 = 0, y2 = 740;
+	if (this->scenePos().x() == x1)
+		this->setPos(x2, this->scenePos().y());
+	else if (this->scenePos().x() == x2)
+		this->setPos(x1, this->scenePos().y());
+	else if(this->scenePos().y() == y1)
+		this->setPos(this->scenePos().x(),y2);
+	else if(this->scenePos().y() == y2)
+		this->setPos(this->scenePos().x(), y1);
+}
+void SnakeHead::advance(int direction)
+{
+	switch (direction)
+	{
+	case 1:moveBy(0, -5); emit headMove(); break;
+	case 2:moveBy(0, 5); emit headMove(); break;
+	case 3:moveBy(-5, 0); emit headMove(); break;
+	case 4:moveBy(5, 0); emit headMove(); break;
+	default:
+		break;
+	}
+	qDebug() << this->scenePos().x() << "," << this->scenePos().y();
 	collisionHandle();
+	reMove();
 }
 void SnakeHead::collisionHandle()
 {
@@ -50,6 +76,27 @@ void SnakeHead::collisionHandle()
 	}
 }
 
+
+
+QRectF SnakeBody::boundingRect()const
+{
+	qreal penWidth = 1;
+	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 5 + penWidth, 20 + penWidth);
+}
+void SnakeBody::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+	painter->setBrush(Qt::blue);
+	painter->drawRect(0, 0, 5, 20);
+}
+QPainterPath SnakeBody::shape()const
+{
+	QPainterPath path;
+	path.setFillRule(Qt::WindingFill);
+	path.addRect(QRectF(0, 0, 20, 20));
+	return path;
+}
 
 Food::Food(qreal m_x, qreal m_y)
 {
@@ -218,23 +265,68 @@ GamePlay::GamePlay(QGraphicsView *m_snakeView, QGraphicsScene *m_snakeScene,QWid
 	snakeScene = m_snakeScene;
 	snakeHead = new SnakeHead;
 	food = new Food(100, 100);
+	snakeLength = 1;
+
+	snakeBody = new SnakeBody(this);
+	snakeScene->addItem(snakeBody);
+	snakeBodyList.push_back(snakeBody);
+	snakeBody->setPos(280, 300);
+
 	snakeScene->addItem(food);
 	snakeScene->addItem(snakeHead);
+	snakeHead->setPos(300, 300);
+	snakePosition.push_back(snakeBody->scenePos());
 	snakeView->show();
 	snakeView->setEnabled(1);
 	snakeHead->setFocus();
 	snakeScene->setFocusItem(snakeHead);
 	setWall();
 	setWall();
+	direction = 4;
+
+	this->startTimer(33);
+
+	connect(snakeHead, &SnakeHead::snakeTurn, this, &GamePlay::setDirection);
+	connect(this, &GamePlay::keepMove, snakeHead, &SnakeHead::advance);
 	connect(snakeHead, &SnakeHead::eatFood, this, &GamePlay::setFood);
 	connect(snakeHead, &SnakeHead::snakeDied, this, &GamePlay::sendOver);
 	connect(snakeHead, &SnakeHead::snakeTurn, this, &GamePlay::setWall);
+	connect(snakeHead, &SnakeHead::headMove, this, &GamePlay::bodyMove);
+	connect(snakeHead, &SnakeHead::eatFood, this, &GamePlay::addBody);
 
 	/*addWallTime = new QTimer;
 	thread = new QThread;
 	addWallTime->moveToThread(thread);
 	connect(addWallTime, &QTimer::timeout, this, &GamePlay::setWall);
 	addWallTime->start(1000);*/
+}
+void GamePlay::addBody()
+{
+	snakeLength++;
+	SnakeBody *newBody;
+	newBody = new SnakeBody(this);
+	snakeScene->addItem(newBody);
+	newBody->setPos(*snakePosition.begin());
+	snakeBodyList.push_back(newBody);
+}
+void GamePlay::bodyMove()
+{
+	for (int i = 0; i < snakeLength; i++)
+	{
+		QPointF tem = snakePosition[i];
+		(snakeBodyList[i])->setPos(tem);
+	}
+}
+void GamePlay::setDirection(int m_direction)
+{
+	this->direction = m_direction;
+}
+void GamePlay::timerEvent(QTimerEvent *event)
+{
+	emit keepMove(this->direction);
+	snakePosition.push_back(snakeHead->scenePos());
+	if (snakePosition.size() > snakeLength)
+		snakePosition.erase(snakePosition.begin());
 }
 void GamePlay::setFood()
 {

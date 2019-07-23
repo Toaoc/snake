@@ -32,10 +32,13 @@ public:
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void collisionHandle();
+	void advance(int derection);
+	void reMove();
 signals:
 	void snakeDied();
 	void eatFood();
-	void snakeTurn();
+	void snakeTurn(int direction);
+	void headMove();
 };
 
 
@@ -50,9 +53,15 @@ public:
 };
 
 
-class SnakeBody :public QGraphicsItem
+class SnakeBody :public QObject,public QGraphicsItem
 {
-
+	Q_OBJECT
+protected:
+	QPainterPath shape()const;
+public:
+	SnakeBody(QWidget *parent):QObject(parent){}
+	QRectF boundingRect() const;
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 };
 
 
@@ -84,15 +93,24 @@ private:
 	Wall *wallList[10];
 	QTimer *addWallTime;
 	QTimer *deleteWallTime;
+	int snakeLength;
+	int direction;
+	QVector<QPointF> snakePosition;
+	QVector<SnakeBody*> snakeBodyList;
 public:
 	GamePlay(QGraphicsView *snakeView, QGraphicsScene *snakeScene,QWidget *parent=0);
+	void timerEvent(QTimerEvent *event);
 signals:
+	void keepMove(int direction);
 	void gameOver();
 public slots:
 	void setFood();
 	void sendOver();
 	void setWall();
 	void destroyWall();
+	void setDirection(int m_direction);
+	void addBody();
+	void bodyMove();
 };
 
 
