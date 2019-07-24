@@ -22,6 +22,7 @@
 #include<QMessageBox>
 #include<QList>
 #include<QVector>
+#include<QEvent>
 class SnakeHead :public QObject, public QGraphicsItem
 {
 	Q_OBJECT
@@ -93,9 +94,7 @@ private:
 	Wall *wallList[10];
 	QTimer *addWallTime;
 	QTimer *deleteWallTime;
-	int snakeLength;
 	int direction;
-	QVector<QPointF> snakePosition;
 	QVector<SnakeBody*> snakeBodyList;
 public:
 	GamePlay(QGraphicsView *snakeView, QGraphicsScene *snakeScene,QWidget *parent=0);
@@ -103,6 +102,7 @@ public:
 signals:
 	void keepMove(int direction);
 	void gameOver();
+	void scoreChanged();
 public slots:
 	void setFood();
 	void sendOver();
@@ -111,6 +111,7 @@ public slots:
 	void setDirection(int m_direction);
 	void addBody();
 	void bodyMove();
+	void screenControl(int);
 };
 
 
@@ -148,7 +149,8 @@ public slots:
 	void senddirection(int direction);
 	void sendclose();
 	void sendexit();
-	void gameOverBox();
+	void snakeOver();
+	void addScore();
 signals:
 	void keydiretion(int direction);
 	void sonclose();
