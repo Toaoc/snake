@@ -34,3 +34,31 @@ void rankWidget::sendclose()
 	emit sonclose();
 	delete this;
 }
+Note::Note(QString m_player, long m_score, QString m_playerTime, Note *m_next)
+{
+	player = m_player;
+	playTime = m_playerTime;
+	score = m_score;
+	next = m_next;
+}
+Note* Note::nextNote()
+{
+	return next;
+}
+const Note* Note::nextNote()const
+{
+	return next;
+}
+void Note::insertAfter(Note *p)
+{
+	p->next = next;
+	next = p;
+}
+Note* Note::deleteAfter()
+{
+	Note *tempPtr = next;
+	if (next == 0)
+		return 0;
+	next = tempPtr->next;
+	return tempPtr;
+}

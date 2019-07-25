@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_SnakeHead_t {
-    QByteArrayData data[7];
-    char stringdata0[58];
+    QByteArrayData data[12];
+    char stringdata0[115];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,13 +33,19 @@ QT_MOC_LITERAL(0, 0, 9), // "SnakeHead"
 QT_MOC_LITERAL(1, 10, 9), // "snakeDied"
 QT_MOC_LITERAL(2, 20, 0), // ""
 QT_MOC_LITERAL(3, 21, 7), // "eatFood"
-QT_MOC_LITERAL(4, 29, 9), // "snakeTurn"
-QT_MOC_LITERAL(5, 39, 9), // "direction"
-QT_MOC_LITERAL(6, 49, 8) // "headMove"
+QT_MOC_LITERAL(4, 29, 10), // "eatBigFood"
+QT_MOC_LITERAL(5, 40, 9), // "snakeTurn"
+QT_MOC_LITERAL(6, 50, 9), // "direction"
+QT_MOC_LITERAL(7, 60, 8), // "headMove"
+QT_MOC_LITERAL(8, 69, 13), // "bigFoodTimeUp"
+QT_MOC_LITERAL(9, 83, 13), // "keyPressEvent"
+QT_MOC_LITERAL(10, 97, 10), // "QKeyEvent*"
+QT_MOC_LITERAL(11, 108, 6) // "envent"
 
     },
-    "SnakeHead\0snakeDied\0\0eatFood\0snakeTurn\0"
-    "direction\0headMove"
+    "SnakeHead\0snakeDied\0\0eatFood\0eatBigFood\0"
+    "snakeTurn\0direction\0headMove\0bigFoodTimeUp\0"
+    "keyPressEvent\0QKeyEvent*\0envent"
 };
 #undef QT_MOC_LITERAL
 
@@ -49,24 +55,34 @@ static const uint qt_meta_data_SnakeHead[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       4,       // signalCount
+       6,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   34,    2, 0x06 /* Public */,
-       3,    0,   35,    2, 0x06 /* Public */,
-       4,    1,   36,    2, 0x06 /* Public */,
-       6,    0,   39,    2, 0x06 /* Public */,
+       1,    0,   49,    2, 0x06 /* Public */,
+       3,    0,   50,    2, 0x06 /* Public */,
+       4,    1,   51,    2, 0x06 /* Public */,
+       5,    1,   54,    2, 0x06 /* Public */,
+       7,    0,   57,    2, 0x06 /* Public */,
+       8,    0,   58,    2, 0x06 /* Public */,
+
+ // slots: name, argc, parameters, tag, flags
+       9,    1,   59,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::Double,    2,
+    QMetaType::Void, QMetaType::Int,    6,
     QMetaType::Void,
+    QMetaType::Void,
+
+ // slots: parameters
+    QMetaType::Void, 0x80000000 | 10,   11,
 
        0        // eod
 };
@@ -79,8 +95,11 @@ void SnakeHead::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         switch (_id) {
         case 0: _t->snakeDied(); break;
         case 1: _t->eatFood(); break;
-        case 2: _t->snakeTurn((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 3: _t->headMove(); break;
+        case 2: _t->eatBigFood((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 3: _t->snakeTurn((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 4: _t->headMove(); break;
+        case 5: _t->bigFoodTimeUp(); break;
+        case 6: _t->keyPressEvent((*reinterpret_cast< QKeyEvent*(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -101,16 +120,30 @@ void SnakeHead::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
             }
         }
         {
+            typedef void (SnakeHead::*_t)(double );
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&SnakeHead::eatBigFood)) {
+                *result = 2;
+                return;
+            }
+        }
+        {
             typedef void (SnakeHead::*_t)(int );
             if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&SnakeHead::snakeTurn)) {
-                *result = 2;
+                *result = 3;
                 return;
             }
         }
         {
             typedef void (SnakeHead::*_t)();
             if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&SnakeHead::headMove)) {
-                *result = 3;
+                *result = 4;
+                return;
+            }
+        }
+        {
+            typedef void (SnakeHead::*_t)();
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&SnakeHead::bigFoodTimeUp)) {
+                *result = 5;
                 return;
             }
         }
@@ -144,13 +177,13 @@ int SnakeHead::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 4;
+        _id -= 7;
     }
     return _id;
 }
@@ -168,16 +201,29 @@ void SnakeHead::eatFood()
 }
 
 // SIGNAL 2
-void SnakeHead::snakeTurn(int _t1)
+void SnakeHead::eatBigFood(double _t1)
 {
     void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 
 // SIGNAL 3
+void SnakeHead::snakeTurn(int _t1)
+{
+    void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 3, _a);
+}
+
+// SIGNAL 4
 void SnakeHead::headMove()
 {
-    QMetaObject::activate(this, &staticMetaObject, 3, Q_NULLPTR);
+    QMetaObject::activate(this, &staticMetaObject, 4, Q_NULLPTR);
+}
+
+// SIGNAL 5
+void SnakeHead::bigFoodTimeUp()
+{
+    QMetaObject::activate(this, &staticMetaObject, 5, Q_NULLPTR);
 }
 struct qt_meta_stringdata_SnakeBody_t {
     QByteArrayData data[1];
@@ -250,8 +296,8 @@ int SnakeBody::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     return _id;
 }
 struct qt_meta_stringdata_GamePlay_t {
-    QByteArrayData data[15];
-    char stringdata0[144];
+    QByteArrayData data[20];
+    char stringdata0[204];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -266,21 +312,28 @@ QT_MOC_LITERAL(2, 18, 0), // ""
 QT_MOC_LITERAL(3, 19, 9), // "direction"
 QT_MOC_LITERAL(4, 29, 8), // "gameOver"
 QT_MOC_LITERAL(5, 38, 12), // "scoreChanged"
-QT_MOC_LITERAL(6, 51, 7), // "setFood"
-QT_MOC_LITERAL(7, 59, 8), // "sendOver"
-QT_MOC_LITERAL(8, 68, 7), // "setWall"
-QT_MOC_LITERAL(9, 76, 11), // "destroyWall"
-QT_MOC_LITERAL(10, 88, 12), // "setDirection"
-QT_MOC_LITERAL(11, 101, 11), // "m_direction"
-QT_MOC_LITERAL(12, 113, 7), // "addBody"
-QT_MOC_LITERAL(13, 121, 8), // "bodyMove"
-QT_MOC_LITERAL(14, 130, 13) // "screenControl"
+QT_MOC_LITERAL(6, 51, 14), // "screenKeyValue"
+QT_MOC_LITERAL(7, 66, 10), // "QKeyEvent*"
+QT_MOC_LITERAL(8, 77, 5), // "event"
+QT_MOC_LITERAL(9, 83, 7), // "setFood"
+QT_MOC_LITERAL(10, 91, 8), // "sendOver"
+QT_MOC_LITERAL(11, 100, 7), // "setWall"
+QT_MOC_LITERAL(12, 108, 11), // "destroyWall"
+QT_MOC_LITERAL(13, 120, 12), // "setDirection"
+QT_MOC_LITERAL(14, 133, 11), // "m_direction"
+QT_MOC_LITERAL(15, 145, 7), // "addBody"
+QT_MOC_LITERAL(16, 153, 8), // "bodyMove"
+QT_MOC_LITERAL(17, 162, 13), // "screenControl"
+QT_MOC_LITERAL(18, 176, 13), // "bigFoodHandle"
+QT_MOC_LITERAL(19, 190, 13) // "deleteBigFood"
 
     },
     "GamePlay\0keepMove\0\0direction\0gameOver\0"
-    "scoreChanged\0setFood\0sendOver\0setWall\0"
+    "scoreChanged\0screenKeyValue\0QKeyEvent*\0"
+    "event\0setFood\0sendOver\0setWall\0"
     "destroyWall\0setDirection\0m_direction\0"
-    "addBody\0bodyMove\0screenControl"
+    "addBody\0bodyMove\0screenControl\0"
+    "bigFoodHandle\0deleteBigFood"
 };
 #undef QT_MOC_LITERAL
 
@@ -290,42 +343,48 @@ static const uint qt_meta_data_GamePlay[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
+      14,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       3,       // signalCount
+       4,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   69,    2, 0x06 /* Public */,
-       4,    0,   72,    2, 0x06 /* Public */,
-       5,    0,   73,    2, 0x06 /* Public */,
+       1,    1,   84,    2, 0x06 /* Public */,
+       4,    0,   87,    2, 0x06 /* Public */,
+       5,    0,   88,    2, 0x06 /* Public */,
+       6,    1,   89,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       6,    0,   74,    2, 0x0a /* Public */,
-       7,    0,   75,    2, 0x0a /* Public */,
-       8,    0,   76,    2, 0x0a /* Public */,
-       9,    0,   77,    2, 0x0a /* Public */,
-      10,    1,   78,    2, 0x0a /* Public */,
-      12,    0,   81,    2, 0x0a /* Public */,
-      13,    0,   82,    2, 0x0a /* Public */,
-      14,    1,   83,    2, 0x0a /* Public */,
+       9,    0,   92,    2, 0x0a /* Public */,
+      10,    0,   93,    2, 0x0a /* Public */,
+      11,    0,   94,    2, 0x0a /* Public */,
+      12,    0,   95,    2, 0x0a /* Public */,
+      13,    1,   96,    2, 0x0a /* Public */,
+      15,    0,   99,    2, 0x0a /* Public */,
+      16,    0,  100,    2, 0x0a /* Public */,
+      17,    1,  101,    2, 0x0a /* Public */,
+      18,    1,  104,    2, 0x0a /* Public */,
+      19,    0,  107,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Int,    3,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 7,    8,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   11,
+    QMetaType::Void, QMetaType::Int,   14,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    2,
+    QMetaType::Void, QMetaType::Double,    2,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -339,14 +398,17 @@ void GamePlay::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 0: _t->keepMove((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 1: _t->gameOver(); break;
         case 2: _t->scoreChanged(); break;
-        case 3: _t->setFood(); break;
-        case 4: _t->sendOver(); break;
-        case 5: _t->setWall(); break;
-        case 6: _t->destroyWall(); break;
-        case 7: _t->setDirection((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 8: _t->addBody(); break;
-        case 9: _t->bodyMove(); break;
-        case 10: _t->screenControl((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: _t->screenKeyValue((*reinterpret_cast< QKeyEvent*(*)>(_a[1]))); break;
+        case 4: _t->setFood(); break;
+        case 5: _t->sendOver(); break;
+        case 6: _t->setWall(); break;
+        case 7: _t->destroyWall(); break;
+        case 8: _t->setDirection((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 9: _t->addBody(); break;
+        case 10: _t->bodyMove(); break;
+        case 11: _t->screenControl((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: _t->bigFoodHandle((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 13: _t->deleteBigFood(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -370,6 +432,13 @@ void GamePlay::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
             typedef void (GamePlay::*_t)();
             if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&GamePlay::scoreChanged)) {
                 *result = 2;
+                return;
+            }
+        }
+        {
+            typedef void (GamePlay::*_t)(QKeyEvent * );
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&GamePlay::screenKeyValue)) {
+                *result = 3;
                 return;
             }
         }
@@ -401,13 +470,13 @@ int GamePlay::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 14)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 14;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 14)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 11;
+        _id -= 14;
     }
     return _id;
 }
@@ -430,9 +499,16 @@ void GamePlay::scoreChanged()
 {
     QMetaObject::activate(this, &staticMetaObject, 2, Q_NULLPTR);
 }
+
+// SIGNAL 3
+void GamePlay::screenKeyValue(QKeyEvent * _t1)
+{
+    void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 3, _a);
+}
 struct qt_meta_stringdata_gameWidget_t {
-    QByteArrayData data[11];
-    char stringdata0[103];
+    QByteArrayData data[12];
+    char stringdata0[115];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -451,12 +527,13 @@ QT_MOC_LITERAL(6, 51, 13), // "senddirection"
 QT_MOC_LITERAL(7, 65, 9), // "sendclose"
 QT_MOC_LITERAL(8, 75, 8), // "sendexit"
 QT_MOC_LITERAL(9, 84, 9), // "snakeOver"
-QT_MOC_LITERAL(10, 94, 8) // "addScore"
+QT_MOC_LITERAL(10, 94, 8), // "addScore"
+QT_MOC_LITERAL(11, 103, 11) // "saveHistory"
 
     },
     "gameWidget\0keydiretion\0\0direction\0"
     "sonclose\0sonexit\0senddirection\0sendclose\0"
-    "sendexit\0snakeOver\0addScore"
+    "sendexit\0snakeOver\0addScore\0saveHistory"
 };
 #undef QT_MOC_LITERAL
 
@@ -466,7 +543,7 @@ static const uint qt_meta_data_gameWidget[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       9,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -474,16 +551,17 @@ static const uint qt_meta_data_gameWidget[] = {
        3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   54,    2, 0x06 /* Public */,
-       4,    0,   57,    2, 0x06 /* Public */,
-       5,    0,   58,    2, 0x06 /* Public */,
+       1,    1,   59,    2, 0x06 /* Public */,
+       4,    0,   62,    2, 0x06 /* Public */,
+       5,    0,   63,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       6,    1,   59,    2, 0x0a /* Public */,
-       7,    0,   62,    2, 0x0a /* Public */,
-       8,    0,   63,    2, 0x0a /* Public */,
-       9,    0,   64,    2, 0x0a /* Public */,
-      10,    0,   65,    2, 0x0a /* Public */,
+       6,    1,   64,    2, 0x0a /* Public */,
+       7,    0,   67,    2, 0x0a /* Public */,
+       8,    0,   68,    2, 0x0a /* Public */,
+       9,    0,   69,    2, 0x0a /* Public */,
+      10,    0,   70,    2, 0x0a /* Public */,
+      11,    0,   71,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Int,    3,
@@ -492,6 +570,7 @@ static const uint qt_meta_data_gameWidget[] = {
 
  // slots: parameters
     QMetaType::Void, QMetaType::Int,    3,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -514,6 +593,7 @@ void gameWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 5: _t->sendexit(); break;
         case 6: _t->snakeOver(); break;
         case 7: _t->addScore(); break;
+        case 8: _t->saveHistory(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -568,13 +648,13 @@ int gameWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 9;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 9)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 8;
+        _id -= 9;
     }
     return _id;
 }

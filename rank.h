@@ -26,4 +26,18 @@ public:
 public slots:
 	void sendclose();
 };
+
+class Note
+{
+private:
+	Note *next;
+public:
+	QString playTime, player;
+	long score;
+	Note(QString m_player, long m_score, QString m_playTime, Note *next = 0);
+	void insertAfter(Note *p);
+	Note *deleteAfter();
+	Note *nextNote();
+	const Note *nextNote() const;
+};
 #endif // !RANK_H

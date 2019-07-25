@@ -1,6 +1,10 @@
 #include"game.h"
 #include<QString>
 #include<QCoreApplication>
+#include<QDateTime>
+#include<QTextStream>
+#include<QFile>
+#include<QIODevice>
 QVector<QPointF> snakePosition;
 int snakeLength;
 int addWall = 0;
@@ -8,30 +12,33 @@ int totalWall = 0;
 int deleteWall = 0;
 int perScore = 5;
 int totalScore = 0;
-void addPosition(QPointF point)
+int difficultLevel = 5;
+long start, end;
+bool bigFoodIsSet;
+void addPosition(QPointF point)//动态更新蛇头前蛇长个位置的函数
 {
 	snakePosition.push_back(point);
 	if (snakePosition.size() > snakeLength)
 		snakePosition.erase(snakePosition.begin());
 }
-SnakeHead::SnakeHead()
+SnakeHead::SnakeHead()//蛇头的构造函数
 {
 	setFlag(QGraphicsItem::ItemIsFocusable);
 	setFlag(QGraphicsItem::ItemIsMovable);
 }
-QRectF SnakeHead::boundingRect()const
+QRectF SnakeHead::boundingRect()const//蛇头的外形函数
 {
 	qreal penWidth = 1;
 	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 20 + penWidth, 20 + penWidth);
 }
-void SnakeHead::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void SnakeHead::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)//画出蛇头的函数
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	painter->setBrush(Qt::green);
 	painter->drawRect(0, 0, 20, 20);
 }
-void SnakeHead::keyPressEvent(QKeyEvent *event)
+void SnakeHead::keyPressEvent(QKeyEvent *event)//蛇头随键盘移动的函数
 {
 	qDebug() << "Button: " << event->key();
 	switch (event->key())
@@ -60,7 +67,7 @@ void SnakeHead::reMove()//检测是否到边界,到边界则从另一边出来
 	else if(this->scenePos().y() > y2)
 		this->setPos(this->scenePos().x(), y1);
 }
-void SnakeHead::advance(int direction)
+void SnakeHead::advance(int direction)//使蛇不停移动的函数
 {
 	switch (direction)
 	{
@@ -75,17 +82,29 @@ void SnakeHead::advance(int direction)
 	//qDebug() << this->scenePos().x() << "," << this->scenePos().y();
 	if(direction!=0)
 		collisionHandle();//处理碰撞
+	if (bigFoodIsSet)
+	{
+		start += 500 / difficultLevel;
+		if (start > (35000 / difficultLevel))
+		{
+			emit bigFoodTimeUp();
+		}
+	}
 	reMove();//检测是否到边界
 }
-void SnakeHead::collisionHandle()
+void SnakeHead::collisionHandle()//处理蛇头与其他物品碰撞的函数
 {
 	QList<QGraphicsItem*> items = collidingItems();
 	foreach(QGraphicsItem *item, items)
 	{
 		if (item->type() == 65537)
 		{
+			totalScore += difficultLevel;
 			emit eatFood();
-			totalScore += perScore;
+		}
+		else if(item->type()==65538)
+		{
+			emit eatBigFood(start);
 		}
 		else
 		{
@@ -97,19 +116,19 @@ void SnakeHead::collisionHandle()
 
 
 
-QRectF SnakeBody::boundingRect()const
+QRectF SnakeBody::boundingRect()const//每节蛇身体的外形的函数
 {
 	qreal penWidth = 1;
 	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 20 + penWidth, 20 + penWidth);
 }
-void SnakeBody::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void SnakeBody::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)//画出每节蛇身体的函数
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	painter->setBrush(Qt::blue);
 	painter->drawRect(0, 0, 20, 20);
 }
-QPainterPath SnakeBody::shape()const
+QPainterPath SnakeBody::shape()const//蛇外形的函数，暂时没有用
 {
 	QPainterPath path;
 	path.setFillRule(Qt::WindingFill);
@@ -117,43 +136,57 @@ QPainterPath SnakeBody::shape()const
 	return path;
 }
 
-Food::Food(qreal m_x, qreal m_y)
+Food::Food(qreal m_x, qreal m_y)//食物的构造函数
 {
 	this->setPos(m_x, m_y);
+	foodScore = difficultLevel;
 }
-QRectF Food::boundingRect()const
+QRectF Food::boundingRect()const//事物的外形大小
 {
 	qreal penWidth = 1;
 	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 20 + penWidth, 20 + penWidth);
 }
-void Food::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Food::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)//画出食物的函数
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	painter->setBrush(Qt::yellow);
 	painter->drawRect(0, 0, 20, 20);
 }
+BigFood::BigFood(qreal x, qreal y)
+{
+	this->setPos(x, y);
+	foodScore = difficultLevel * 64;
+}
+QRectF BigFood::boundingRect()const//食物的外形大小
+{
+	qreal penWidth = 1;
+	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 35 + penWidth, 35 + penWidth);
+}
+void BigFood::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)//画出食物的函数
+{
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+	painter->setBrush(Qt::yellow);
+	painter->drawRect(0, 0, 35, 35);
+}
 
 
-QRectF Wall::boundingRect()const
+QRectF Wall::boundingRect()const//墙的外形函数
 {
 	qreal penWidth = 1;
 	return QRectF(0 - penWidth / 2, 0 - penWidth / 2, 20 + penWidth, 20 + penWidth);
 }
-void Wall::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Wall::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)//画出墙的函数
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	painter->setBrush(Qt::red);
 	painter->drawRect(0, 0, 20, 20);
 }
-Wall::Wall(qreal x, qreal y)
+Wall::Wall(qreal x, qreal y)//墙的构造函数
 {
 	this->setPos(x, y);
-}
-Wall::Wall(Wall&w)
-{
-	
 }
 
 
@@ -162,7 +195,8 @@ void gameWidget::keyPressEvent(QKeyEvent *event)
 	senddirection(event->key());
 	qDebug() << event->key() << "hello";
 }
-gameWidget::gameWidget(QWidget*parent) :QWidget(parent)
+
+gameWidget::gameWidget(QWidget*parent) :QWidget(parent)//主窗口函数
 {
 	this->resize(1100, 750);
 	mainLayout = new QGridLayout(this);
@@ -179,6 +213,8 @@ gameWidget::gameWidget(QWidget*parent) :QWidget(parent)
 	addWall = 0;
 	totalWall = 0;
 	deleteWall = 0;
+	bigFoodIsSet = false;
+	start = 0;
 
 	controlButton = new QButtonGroup(controlView);
 	controlUp = new QPushButton(controlView);
@@ -258,22 +294,46 @@ gameWidget::gameWidget(QWidget*parent) :QWidget(parent)
 	connect(gamePlay, &GamePlay::gameOver, this, &gameWidget::snakeOver);
 	connect(gamePlay, &GamePlay::scoreChanged, this, &gameWidget::addScore);
 }
+
+void gameWidget::saveHistory()//将游戏数据存入
+{
+	gameEndBox->close();
+	QString playerName, playerScore, playTime;
+	playerName = enterName->text();
+	qDebug() << "platerLength:" << playerName.size();
+	if (playerName.size() == 0)
+		playerName = "Toao";
+	playerScore = QString::number(totalScore);
+	QDateTime currentTime = QDateTime::currentDateTime();
+	playTime = currentTime.toString("yyyy.MM.dd-hh:mm");
+	QFile file("Resources/rank.txt");
+	if (!file.open(QIODevice::Append | QIODevice::Text))
+	{
+		QMessageBox::critical(NULL, "提示", "无法创建文件");
+		return ;
+	}
+	QTextStream out(&file);
+	out << playerName << "\t\t" << playerScore << "\t\t" << playTime << "\n" << flush;
+	file.close();
+}
 void GamePlay::screenControl(int screenKey)//模拟上下左右的键盘输入
 {
 	qDebug() << "屏幕按键：" << screenKey;
-	QKeyEvent keyEvent(QEvent::KeyPress, screenKey, Qt::NoModifier);
-	QCoreApplication::sendEvent(snakeHead, &keyEvent);
+	QKeyEvent keyPressEvent(QEvent::KeyPress, screenKey, Qt::NoModifier);
+	//QCoreApplication::sendEvent(snakeHead, &keyPressEvent);
+	emit screenKeyValue(&keyPressEvent);
+
 }
-void gameWidget::addScore()
+void gameWidget::addScore()//将分数显示到界面上
 {
 	scoreView->setText(QString::number(totalScore));
 }
-void gameWidget::sendclose()
+void gameWidget::sendclose()//发送关闭该窗口的信号，即返回上一层
 {
 	emit sonclose();
 	delete this;
 }
-void gameWidget::sendexit()
+void gameWidget::sendexit()//发送退出的信号
 {
 	emit sonexit();
 	delete this;
@@ -284,14 +344,34 @@ void  gameWidget::senddirection(int direction)
 }
 void gameWidget::snakeOver()//游戏结束处理函数
 {
-	gameEndBox = new QMessageBox;
-	gameEndBox->setText(QString::fromLocal8Bit("得分：").append(QString::number(totalScore)).append("\n").append(QString::fromLocal8Bit("你真棒")));
-	gameEndBox->addButton(QString::fromLocal8Bit("确定"), QMessageBox::RejectRole);
-	gameEndBox->addButton(QString::fromLocal8Bit("取消"), QMessageBox::AcceptRole);
+	gameEndBox = new QDialog(this);
+	gameEndBox->resize(500, 300);
+
+	QLabel *message;
+	message = new QLabel(gameEndBox);
+	message->setText(QString::fromLocal8Bit("得分：").append(QString::number(totalScore)).append("\n").append(QString::fromLocal8Bit("你真棒")));
+	message->move(200, 80);
+
+	QLabel *player;
+	player = new QLabel(gameEndBox);
+	player->setText(QString::fromLocal8Bit("游戏者"));
+	player->move(100, 150);
+
+	enterName = new QLineEdit(gameEndBox);
+	enterName->move(170, 150);
+	enterName->setPlaceholderText("Toao");
+
+	diaLogClose = new QPushButton(gameEndBox);
+	diaLogClose->setText(QString::fromLocal8Bit("确定"));
+	diaLogClose->resize(300, 40);
+	diaLogClose->move(100, 200);
+
 	gameEndBox->show();
+	connect(diaLogClose, &QPushButton::clicked, this, &gameWidget::saveHistory);
 }
 
 
+//游戏控制的函数
 GamePlay::GamePlay(QGraphicsView *m_snakeView, QGraphicsScene *m_snakeScene,QWidget *parent):QWidget(parent)
 {
 	snakeBodyList.clear();
@@ -299,6 +379,7 @@ GamePlay::GamePlay(QGraphicsView *m_snakeView, QGraphicsScene *m_snakeScene,QWid
 	snakeScene = m_snakeScene;
 	snakeHead = new SnakeHead;
 	food = new Food(100, 100);
+	foodCount = 1;
 	snakeLength = 1;
 
 	snakeBody = new SnakeBody(this);
@@ -314,12 +395,14 @@ GamePlay::GamePlay(QGraphicsView *m_snakeView, QGraphicsScene *m_snakeScene,QWid
 	snakeView->setEnabled(1);
 	snakeHead->setFocus();
 	snakeScene->setFocusItem(snakeHead);
+	snakeView->setFocusPolicy(Qt::StrongFocus);
 	setWall();
 	setWall();
 	direction = 4;
+	refreshTime = 500 / difficultLevel;
 
 	if(direction!=0)
-		this->startTimer(100);
+		this->startTimer(refreshTime);
 
 	connect(snakeHead, &SnakeHead::snakeTurn, this, &GamePlay::setDirection);
 	connect(this, &GamePlay::keepMove, snakeHead, &SnakeHead::advance);
@@ -328,14 +411,13 @@ GamePlay::GamePlay(QGraphicsView *m_snakeView, QGraphicsScene *m_snakeScene,QWid
 	connect(snakeHead, &SnakeHead::snakeTurn, this, &GamePlay::setWall);
 	connect(snakeHead, &SnakeHead::headMove, this, &GamePlay::bodyMove);
 	connect(snakeHead, &SnakeHead::eatFood, this, &GamePlay::addBody);
+	connect(this, &GamePlay::screenKeyValue, snakeHead, &SnakeHead::keyPressEvent);
+	connect(snakeHead, &SnakeHead::eatBigFood, this, &GamePlay::bigFoodHandle);
+	connect(snakeHead, &SnakeHead::bigFoodTimeUp, this, &GamePlay::deleteBigFood);
 
-	/*addWallTime = new QTimer;
-	thread = new QThread;
-	addWallTime->moveToThread(thread);
-	connect(addWallTime, &QTimer::timeout, this, &GamePlay::setWall);
-	addWallTime->start(1000);*/
 }
-void GamePlay::addBody()
+
+void GamePlay::addBody()//蛇吃食物之后身体变长的函数
 {
 	emit scoreChanged();
 	snakeLength++;
@@ -346,7 +428,7 @@ void GamePlay::addBody()
 	newBody->setPos(*snakePosition.begin());
 	snakeBodyList.push_back(newBody);
 }
-void GamePlay::bodyMove()
+void GamePlay::bodyMove()//蛇身体移动的函数
 {
 	for (int i = 0; i < snakeLength; i++)
 	{
@@ -354,18 +436,18 @@ void GamePlay::bodyMove()
 		(snakeBodyList[i])->setPos(tem);
 	}
 }
-void GamePlay::setDirection(int m_direction)
+void GamePlay::setDirection(int m_direction)//蛇根据头部的移动方向确定整体的移动方向
 {
 	this->direction = m_direction;
 }
-void GamePlay::timerEvent(QTimerEvent *event)
+void GamePlay::timerEvent(QTimerEvent *event)//刷新页面的函数
 {
 	emit keepMove(this->direction);
 	snakePosition.push_back(snakeHead->scenePos());
 	if (snakePosition.size() > snakeLength)
 		snakePosition.erase(snakePosition.begin());
 }
-void GamePlay::setFood()
+void GamePlay::setFood()//设置食物的函数
 {
 	qreal x, y;
 	if (snakeView->width() < 810)
@@ -384,10 +466,20 @@ void GamePlay::setFood()
 	delete food;
 	qDebug() << "x: " << x << "  y:" << y;
 	food = new Food(x, y);
+	foodCount++;
+	if (foodCount % 5 == 0)
+	{
+		x = qrand() % (snakeView->width() - 10);
+		y = qrand() % (snakeView->height() - 10);
+		bigFood = new BigFood(x, y);
+		snakeScene->addItem(bigFood);
+		bigFoodIsSet = true;
+		start = 0;
+	}
 	snakeScene->addItem(food);
 	destroyWall();
 }
-void GamePlay::setWall()
+void GamePlay::setWall()//设置墙的函数
 {
 	if (totalWall!=10)
 	{
@@ -415,7 +507,7 @@ void GamePlay::setWall()
 		totalWall++;
 	}
 }
-void GamePlay::destroyWall()
+void GamePlay::destroyWall()//删除墙的函数
 {
 	qDebug() << "deleteWall: " << deleteWall;
 	if (totalWall != 0)
@@ -433,7 +525,22 @@ void GamePlay::destroyWall()
 		totalWall--;
 	}
 }
-void GamePlay::sendOver()
+void GamePlay::bigFoodHandle(double totalTime)
+{
+	double bigFoodScore = (double)(bigFood->getFoodScore()) * (totalTime / (50000 / difficultLevel));
+	bigFoodScore -= (int)bigFoodScore % difficultLevel;
+	totalScore += (int)bigFoodScore;
+	delete bigFood;
+	emit scoreChanged();
+	bigFoodIsSet = false;
+
+}
+void GamePlay::sendOver()//发出蛇死亡的信号给主页面
 {
 	emit gameOver();
+}
+void GamePlay::deleteBigFood()
+{
+	delete bigFood;
+	bigFoodIsSet = false;
 }

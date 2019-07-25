@@ -27,7 +27,6 @@ class SnakeHead :public QObject, public QGraphicsItem
 {
 	Q_OBJECT
 protected:
-	void keyPressEvent(QKeyEvent *envent);
 public:
 	SnakeHead();
 	QRectF boundingRect() const;
@@ -35,22 +34,40 @@ public:
 	void collisionHandle();
 	void advance(int derection);
 	void reMove();
+public slots:
+	void keyPressEvent(QKeyEvent *envent);
 signals:
 	void snakeDied();
 	void eatFood();
+	void eatBigFood(double);
 	void snakeTurn(int direction);
 	void headMove();
+	void bigFoodTimeUp();
 };
 
 
 class Food :public QGraphicsItem
 {
+protected:
+	int foodScore;
 public:
 	enum{Type=65537};
 	int type()const { return Type; }
 	Food(qreal x, qreal y);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+};
+class BigFood :public QGraphicsItem
+{
+protected:
+	int foodScore;
+public:
+	enum { Type = 65538 };
+	int type()const { return Type; }
+	BigFood(qreal x, qreal y);
+	QRectF boundingRect() const;
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	int getFoodScore() { return foodScore; }
 };
 
 
@@ -81,6 +98,7 @@ public:
 };
 
 
+
 class GamePlay:public QWidget
 {
 	Q_OBJECT
@@ -91,10 +109,13 @@ private:
 	SnakeBody *snakeBody;
 	SnakeTail *snakeTail;
 	Food *food;
+	BigFood *bigFood;
 	Wall *wallList[10];
 	QTimer *addWallTime;
 	QTimer *deleteWallTime;
+	int refreshTime;
 	int direction;
+	int foodCount;
 	QVector<SnakeBody*> snakeBodyList;
 public:
 	GamePlay(QGraphicsView *snakeView, QGraphicsScene *snakeScene,QWidget *parent=0);
@@ -103,6 +124,7 @@ signals:
 	void keepMove(int direction);
 	void gameOver();
 	void scoreChanged();
+	void screenKeyValue(QKeyEvent *event);
 public slots:
 	void setFood();
 	void sendOver();
@@ -112,6 +134,9 @@ public slots:
 	void addBody();
 	void bodyMove();
 	void screenControl(int);
+	void bigFoodHandle(double);
+	void deleteBigFood();
+	
 };
 
 
@@ -141,7 +166,9 @@ protected:
 	QWidget *fill3;
 	QWidget *fill4;
 	QTimer *timeUp;
-	QMessageBox *gameEndBox;
+	QDialog *gameEndBox;
+	QLineEdit *enterName;
+	QPushButton *diaLogClose;
 public:
 	void keyPressEvent(QKeyEvent  *event);
 	gameWidget(QWidget *parent = 0);
@@ -151,6 +178,7 @@ public slots:
 	void sendexit();
 	void snakeOver();
 	void addScore();
+	void saveHistory();
 signals:
 	void keydiretion(int direction);
 	void sonclose();
