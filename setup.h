@@ -17,6 +17,7 @@ class setupWidget :public QWidget
 signals:
 	void sonclose();
 	void stopMusic(bool);
+	void changeDifficulty(int);
 protected:
 	QGridLayout *setupLayout, *setupOpLayout;
 	QWidget *setupOp;
@@ -27,9 +28,10 @@ protected:
 	QLabel *diffText;
 	QRadioButton *silence;
 public:
-	setupWidget(QWidget*parent=0);
+	setupWidget(int gameDifficulty,QWidget*parent=0);
 public slots:
 	void sendclose();
 	void sendstop(bool);
+	void sendDifficultyChange(int);
 };
 #endif // !SETUP_H

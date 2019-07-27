@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_setupWidget_t {
-    QByteArrayData data[6];
-    char stringdata0[51];
+    QByteArrayData data[8];
+    char stringdata0[89];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,12 +33,15 @@ QT_MOC_LITERAL(0, 0, 11), // "setupWidget"
 QT_MOC_LITERAL(1, 12, 8), // "sonclose"
 QT_MOC_LITERAL(2, 21, 0), // ""
 QT_MOC_LITERAL(3, 22, 9), // "stopMusic"
-QT_MOC_LITERAL(4, 32, 9), // "sendclose"
-QT_MOC_LITERAL(5, 42, 8) // "sendstop"
+QT_MOC_LITERAL(4, 32, 16), // "changeDifficulty"
+QT_MOC_LITERAL(5, 49, 9), // "sendclose"
+QT_MOC_LITERAL(6, 59, 8), // "sendstop"
+QT_MOC_LITERAL(7, 68, 20) // "sendDifficultyChange"
 
     },
     "setupWidget\0sonclose\0\0stopMusic\0"
-    "sendclose\0sendstop"
+    "changeDifficulty\0sendclose\0sendstop\0"
+    "sendDifficultyChange"
 };
 #undef QT_MOC_LITERAL
 
@@ -48,28 +51,32 @@ static const uint qt_meta_data_setupWidget[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       2,       // signalCount
+       3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   34,    2, 0x06 /* Public */,
-       3,    1,   35,    2, 0x06 /* Public */,
+       1,    0,   44,    2, 0x06 /* Public */,
+       3,    1,   45,    2, 0x06 /* Public */,
+       4,    1,   48,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       4,    0,   38,    2, 0x0a /* Public */,
-       5,    1,   39,    2, 0x0a /* Public */,
+       5,    0,   51,    2, 0x0a /* Public */,
+       6,    1,   52,    2, 0x0a /* Public */,
+       7,    1,   55,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
     QMetaType::Void, QMetaType::Bool,    2,
+    QMetaType::Void, QMetaType::Int,    2,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void, QMetaType::Bool,    2,
+    QMetaType::Void, QMetaType::Int,    2,
 
        0        // eod
 };
@@ -82,8 +89,10 @@ void setupWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         switch (_id) {
         case 0: _t->sonclose(); break;
         case 1: _t->stopMusic((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 2: _t->sendclose(); break;
-        case 3: _t->sendstop((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 2: _t->changeDifficulty((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: _t->sendclose(); break;
+        case 4: _t->sendstop((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 5: _t->sendDifficultyChange((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -100,6 +109,13 @@ void setupWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
             typedef void (setupWidget::*_t)(bool );
             if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&setupWidget::stopMusic)) {
                 *result = 1;
+                return;
+            }
+        }
+        {
+            typedef void (setupWidget::*_t)(int );
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&setupWidget::changeDifficulty)) {
+                *result = 2;
                 return;
             }
         }
@@ -131,13 +147,13 @@ int setupWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 6;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 6)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 4;
+        _id -= 6;
     }
     return _id;
 }
@@ -153,5 +169,12 @@ void setupWidget::stopMusic(bool _t1)
 {
     void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
+}
+
+// SIGNAL 2
+void setupWidget::changeDifficulty(int _t1)
+{
+    void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 QT_END_MOC_NAMESPACE

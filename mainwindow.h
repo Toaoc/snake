@@ -16,6 +16,7 @@ protected:
 signals:
 	void closeAll();
 	void gamestart();
+	void sendGameDifficulty(int);
 public:
 	mainWidget(QWidget *parent=0);
 	QPushButton *mGame;
@@ -25,8 +26,10 @@ public:
 	QPushButton *mExit;
 	QMediaPlayer *player;
 	QMediaPlaylist *playlist;
+	int gameDifficulty;
 public slots:
 	void musicControl(bool);
+	void difficultyChange(int);
 private slots:
 	void pressGame();
 	void pressSetup();

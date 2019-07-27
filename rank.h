@@ -9,6 +9,27 @@
 #include<QFile>
 #include<QMessageBox>
 #include<QTextStream>
+
+class Node
+{
+public:
+	std::string playTime, player;
+	long score;
+	Node *next, *prev;
+};
+class linkList
+{
+public:
+	linkList();
+	~linkList();
+	Node* getHead() { return head->next; }
+	void linkSort();
+	void linkAdd(std::string m_player, long m_score, std::string m_playtime);
+	bool isEmpty();
+private:
+	Node *head, *tail;
+	int length;
+};
 class rankWidget :public QMainWindow
 {
 	Q_OBJECT
@@ -18,26 +39,10 @@ private:
 	QPushButton *back;
 	QTextEdit *textBox;
 	QToolBar *toolbar;
-	QFile *file;
 	QMessageBox *errorOpen;
-	QTextStream *in;
 public:
 	rankWidget(QWidget *parent = 0);
 public slots:
 	void sendclose();
-};
-
-class Note
-{
-private:
-	Note *next;
-public:
-	QString playTime, player;
-	long score;
-	Note(QString m_player, long m_score, QString m_playTime, Note *next = 0);
-	void insertAfter(Note *p);
-	Note *deleteAfter();
-	Note *nextNote();
-	const Note *nextNote() const;
 };
 #endif // !RANK_H

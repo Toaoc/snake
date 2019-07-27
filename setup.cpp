@@ -3,7 +3,7 @@
 #include<QPalette>
 #include<QPixmap>
 #include<QObject>
-setupWidget::setupWidget(QWidget *parent) :QWidget(parent)
+setupWidget::setupWidget(int gameDifficulty,QWidget *parent) :QWidget(parent)
 {
 	this->resize(1100, 750);
 	setupOp = new QWidget(this);
@@ -25,7 +25,7 @@ setupWidget::setupWidget(QWidget *parent) :QWidget(parent)
 	diff = new QSpinBox(setupOp);
 	diff->setMinimum(1);
 	diff->setMaximum(8);
-	diff->setValue(5);
+	diff->setValue(gameDifficulty);
 	diff->setMaximumWidth(50);
 	void (QSpinBox::*valueAlter)(int) = &QSpinBox::valueChanged;
 
@@ -33,7 +33,7 @@ setupWidget::setupWidget(QWidget *parent) :QWidget(parent)
 	difficult->setOrientation(Qt::Horizontal);
 	difficult->setMinimum(1);
 	difficult->setMaximum(8);
-	difficult->setValue(5);
+	difficult->setValue(gameDifficulty);
 	difficult->setSingleStep(1);
 	difficult->setMaximumWidth(600);
 
@@ -59,6 +59,7 @@ setupWidget::setupWidget(QWidget *parent) :QWidget(parent)
 	setupLayout->addWidget(back, 0, 0, 1, 1);
 	setupLayout->addWidget(setupOp, 1, 0, 9, 20);
 	
+	connect(difficult, &QSlider::valueChanged, this, &setupWidget::sendDifficultyChange);
 	connect(silence, &QRadioButton::toggled, this, &setupWidget::sendstop);
 	connect(back, &QPushButton::clicked, this, &setupWidget::sendclose);
 	connect(difficult, &QSlider::valueChanged, diff, &QSpinBox::setValue);
@@ -72,4 +73,8 @@ void setupWidget::sendclose()
 void setupWidget::sendstop(bool isStop)
 {
 	emit stopMusic(isStop);
+}
+void setupWidget::sendDifficultyChange(int changedDifficulty)
+{
+	emit changeDifficulty(changedDifficulty);
 }

@@ -171,7 +171,7 @@ protected:
 	QPushButton *diaLogClose;
 public:
 	void keyPressEvent(QKeyEvent  *event);
-	gameWidget(QWidget *parent = 0);
+	gameWidget(int gameDifficulty, QWidget *parent = 0);
 public slots:
 	void senddirection(int direction);
 	void sendclose();

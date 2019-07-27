@@ -5,6 +5,7 @@
 mainWidget::mainWidget(QWidget *parent) :QWidget(parent)
 {
 	this->resize(1100, 750);
+	gameDifficulty = 5;
 
 	this->setAutoFillBackground(true);
 	QPalette palette;
@@ -46,7 +47,7 @@ mainWidget::mainWidget(QWidget *parent) :QWidget(parent)
 void mainWidget::pressGame()
 {
 	gameWidget *game;
-	game = new gameWidget;
+	game = new gameWidget(gameDifficulty);
 	game->show();
 	this->close();
 	connect(game, &gameWidget::sonclose, this, &mainWidget::show);
@@ -55,11 +56,12 @@ void mainWidget::pressGame()
 void mainWidget::pressSetup()
 {
 	setupWidget *setup;
-	setup = new setupWidget;
+	setup = new setupWidget(gameDifficulty);
 	setup->show();
 	this->close();
 	connect(setup, &setupWidget::stopMusic, this,&mainWidget::musicControl);
 	connect(setup, &setupWidget::sonclose, this, &mainWidget::show);
+	connect(setup, &setupWidget::changeDifficulty, this, &mainWidget::difficultyChange);
 }
 void mainWidget::pressInduce()
 {
@@ -88,4 +90,8 @@ void mainWidget::musicControl(bool isStop)
 		player->pause();
 	else
 		player->play();
+}
+void mainWidget::difficultyChange(int m_difficulty)
+{
+	gameDifficulty = m_difficulty;
 }

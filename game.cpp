@@ -10,7 +10,6 @@ int snakeLength;
 int addWall = 0;
 int totalWall = 0;
 int deleteWall = 0;
-int perScore = 5;
 int totalScore = 0;
 int difficultLevel = 5;
 long start, end;
@@ -85,7 +84,7 @@ void SnakeHead::advance(int direction)//使蛇不停移动的函数
 	if (bigFoodIsSet)
 	{
 		start += 500 / difficultLevel;
-		if (start > (35000 / difficultLevel))
+		if (start > (30000 / difficultLevel))
 		{
 			emit bigFoodTimeUp();
 		}
@@ -196,7 +195,7 @@ void gameWidget::keyPressEvent(QKeyEvent *event)
 	qDebug() << event->key() << "hello";
 }
 
-gameWidget::gameWidget(QWidget*parent) :QWidget(parent)//主窗口函数
+gameWidget::gameWidget(int gameDifficulty,QWidget*parent) :QWidget(parent)//主窗口函数
 {
 	this->resize(1100, 750);
 	mainLayout = new QGridLayout(this);
@@ -215,6 +214,7 @@ gameWidget::gameWidget(QWidget*parent) :QWidget(parent)//主窗口函数
 	deleteWall = 0;
 	bigFoodIsSet = false;
 	start = 0;
+	difficultLevel = gameDifficulty;
 
 	controlButton = new QButtonGroup(controlView);
 	controlUp = new QPushButton(controlView);
@@ -254,7 +254,7 @@ gameWidget::gameWidget(QWidget*parent) :QWidget(parent)//主窗口函数
 	scoreView = new QLineEdit(controlView);
 	diffView = new QLineEdit(controlView);
 
-	diffView->setText(QString::number(perScore));
+	diffView->setText(QString::number(gameDifficulty));
 	scoreView->setText(QString::number(totalScore));
 	diffView->setReadOnly(1);
 	scoreView->setReadOnly(1);
@@ -467,7 +467,7 @@ void GamePlay::setFood()//设置食物的函数
 	qDebug() << "x: " << x << "  y:" << y;
 	food = new Food(x, y);
 	foodCount++;
-	if (foodCount % 5 == 0)
+	if (foodCount % 6 == 0)
 	{
 		x = qrand() % (snakeView->width() - 10);
 		y = qrand() % (snakeView->height() - 10);
@@ -527,7 +527,7 @@ void GamePlay::destroyWall()//删除墙的函数
 }
 void GamePlay::bigFoodHandle(double totalTime)
 {
-	double bigFoodScore = (double)(bigFood->getFoodScore()) * (totalTime / (50000 / difficultLevel));
+	double bigFoodScore = (double)(bigFood->getFoodScore()) * ((30000/difficultLevel-totalTime) / (30000 / difficultLevel));
 	bigFoodScore -= (int)bigFoodScore % difficultLevel;
 	totalScore += (int)bigFoodScore;
 	delete bigFood;
